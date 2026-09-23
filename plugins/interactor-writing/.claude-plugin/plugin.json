@@ -2,7 +2,7 @@
   "name": "interactor-writing",
   "displayName": "Interactor Writing",
   "description": "Write and edit Interactor CMS posts from Claude: open a post as a file, edit it yourself or by asking, and watch a live preview update beside the chat. Includes the Interactor CMS connection \u2014 sign in once, nothing else to set up.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Interactor"
   },

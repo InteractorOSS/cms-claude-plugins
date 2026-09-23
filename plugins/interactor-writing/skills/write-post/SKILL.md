@@ -54,6 +54,12 @@ server's name too. Either works; prefer the plugin's.
   re-read it first: the writer may have typed, or the sync may have pulled a
   change from the CMS. Don't use `update_post` or `edit_post_content` on this
   post while the sync runs, because they write around the file.
+- **Before a sweeping change** (rewriting a whole section, restructuring,
+  changing the tone throughout), call `checkpoint_post` with a short label,
+  e.g. "Before rewriting the intro". Small edits don't need one: the CMS
+  already keeps a checkpoint of each writing session and after each pause. If
+  the writer wants an earlier version back, use `list_post_revisions` and
+  `restore_post_revision`. The restored text arrives in the file on its own.
 - The frontmatter is fair game (title, excerpt, tags, `meta_description`, …)
   except `id`. **Don't change `status` in the file**: the CMS refuses it.
   Submitting, approving and publishing go through `post_workflow`.
