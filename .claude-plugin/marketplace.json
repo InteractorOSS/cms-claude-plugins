@@ -11,7 +11,7 @@
       "name": "interactor-writing",
       "source": "./plugins/interactor-writing",
       "description": "Write and edit Interactor CMS posts from Claude: open a post as a file, edit it yourself or by asking, and watch a live preview update beside the chat.",
-      "version": "0.4.3"
+      "version": "0.4.4"
     }
   ]
 }

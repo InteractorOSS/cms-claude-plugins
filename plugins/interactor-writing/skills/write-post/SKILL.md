@@ -40,7 +40,10 @@ server's name too. Either works; prefer the plugin's.
    `create_post` with the title, `platforms` set to that site's slug, as a
    markdown draft, and use what it returns.
 
-3. **Open it:** `open_for_editing` with the post's `id`. It returns
+3. **Open it:** `open_for_editing` with the post's `id`, **once**. Each call
+   ends the previous editing session for that post, so a second call cuts off
+   a sync tool that's already running. Keep the `preview_url` it returns and
+   reuse it instead of calling again. It returns
    `preview_url`, `edit_key`, `file_url` and `filename`. Treat `edit_key` as a
    secret: pass it only to the sync tool below, never echo it to the writer.
 
@@ -90,8 +93,13 @@ server's name too. Either works; prefer the plugin's.
   - `save FAILED`: explain the reason it gives in plain words and fix the file.
   - `kept an older local copy`: an earlier session's unsynced file was set
     aside as `posts/<filename>.local-<time>`. Offer to bring anything back.
-  - `editing session ended`: the session expired (8 hours) or Claude was
-    disconnected from the CMS. Run **Open a post** again; the file stays.
+  - `editing session ended`: the session expired (8 hours), the post was
+    opened again elsewhere, or Claude was disconnected from the CMS. Run
+    **Open a post** again, once; the file stays.
+- **The CMS connection renews itself.** Don't warn the writer that it's about
+  to expire, or ask them to reconnect because of a time you saw. `whoami`
+  reports `token.kind: "connection"` with `refreshes_automatically`. Only a
+  real refusal (a 401 from the CMS tools) means they need to sign in again.
 
 ## Preview-only mode (no Node.js)
 
