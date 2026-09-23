@@ -25,9 +25,16 @@ server's name too. Either works; prefer the plugin's.
    Say which organization `whoami` reports if the writer belongs to more than
    one, so a post never lands in the wrong one.
 
-2. **Find the post.** Use `list_posts` (or the slug, if the writer gave one)
-   and confirm when more than one post matches. For a **new** post, call
-   `create_post` with the title (a draft, markdown) and use what it returns.
+2. **Find the post.** Search, don't page through everything: call
+   `list_posts` with `search` set to what the writer described (a title word,
+   topic or slug). If they said where it's published ("on the website",
+   "for product-manager"), call `list_sites` to turn that name into a slug and
+   pass it as `site`. When exactly one post matches, go ahead; when several do,
+   show the few best (title, site, status) and ask which. For a **new** post:
+   call `list_sites`. If the organization has one site, use it; if it has
+   several and the writer didn't say, ask which site the post is for. Then call
+   `create_post` with the title, `platforms` set to that site's slug, as a
+   markdown draft, and use what it returns.
 
 3. **Open it:** `open_for_editing` with the post's `id`. It returns
    `preview_url`, `edit_key`, `file_url` and `filename`. Treat `edit_key` as a
