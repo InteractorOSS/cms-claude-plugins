@@ -58,8 +58,12 @@ server's name too. Either works; prefer the plugin's.
 
 5. **Show it.** Open `preview_url` in the built-in browser pane, and open
    `posts/<filename>` for the writer if the app can show files. Then tell them
-   in a line or two: the post is open, they can type in the file or ask you
-   for changes, and the preview updates on its own.
+   in a line or two, **always naming the organization (from `whoami`) and the
+   post's site(s)**: e.g. "Opened *SEO, AEO & GEO* (Interactor · website).
+   Type in the file or ask me for changes; the preview updates on its own." A
+   writer who meant a different org or site should be able to catch it from
+   that one line. The org is fixed by the CMS connection (to use another,
+   reconnect and pick it on the approval page), so don't ask for it; state it.
 
 ## While it's open
 
