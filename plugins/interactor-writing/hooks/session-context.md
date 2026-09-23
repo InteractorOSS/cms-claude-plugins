@@ -1,0 +1,1 @@
+Interactor Writing is installed. When the user asks to get, show, find, pull up, open, edit or work on an Interactor CMS post or draft, or to start a new one, use the `interactor-writing:write-post` skill: it opens the post as a local file with a live preview. Don't just describe the post in chat.
