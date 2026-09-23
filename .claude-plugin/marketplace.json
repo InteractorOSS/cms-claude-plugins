@@ -1,0 +1,17 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "interactor",
+  "description": "Interactor plugins for Claude Code.",
+  "owner": {
+    "name": "Interactor",
+    "url": "https://github.com/InteractorOSS"
+  },
+  "plugins": [
+    {
+      "name": "interactor-writing",
+      "source": "./plugins/interactor-writing",
+      "description": "Write and edit Interactor CMS posts from Claude: open a post as a file, edit it yourself or by asking, and watch a live preview update beside the chat.",
+      "version": "0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cms": {
+      "type": "http",
+      "url": "${INTERACTOR_CMS_URL:-https://cms.interactor.com}/api/mcp"
+    }
+  }
+}

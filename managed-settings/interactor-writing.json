@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "interactor": {
+      "source": {
+        "source": "github",
+        "repo": "InteractorOSS/cms-claude-plugins"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "interactor-writing@interactor": true
+  }
+}
