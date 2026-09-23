@@ -15,16 +15,30 @@ Works in the **Claude desktop app (Code tab)** and **Claude Code**.
 
 ## Install
 
-In Claude, run:
+Type these in Claude's message box, one at a time (they're Claude commands, not
+terminal commands):
 
 ```
 /plugin marketplace add InteractorOSS/cms-claude-plugins
 /plugin install interactor-writing@interactor
 ```
 
-The first time you use it, sign in to the CMS when asked (or run `/mcp` and pick the
-Interactor CMS), and choose the organization Claude may write in. That's all. The CMS
-connection comes with the plugin.
+Or run the same thing from a terminal:
+
+```
+claude plugin marketplace add InteractorOSS/cms-claude-plugins
+claude plugin install interactor-writing@interactor
+```
+
+Then sign in to the CMS once:
+
+- **Claude desktop app:** Settings → Plugins → Interactor Writing → Connectors →
+  **interactor-cms** → Connect.
+- **Claude Code in a terminal:** run `/mcp`, pick `plugin:interactor-writing:interactor-cms`,
+  and authenticate.
+
+Approve in the browser and choose the organization Claude may write in. That's all. The
+CMS connection comes with the plugin.
 
 Then say *"open the post about …"*, *"start a new post about …"*, or run
 `/interactor-writing:write-post`.
@@ -68,4 +82,8 @@ node --test tests/live-sync.test.mjs
 claude plugin validate .
 ```
 
-`INTERACTOR_CMS_URL` points the plugin at another CMS (e.g. `http://localhost:4021`).
+The connector URL is written out as `https://cms.interactor.com/api/mcp` on purpose. With
+an environment-variable template in its place, the Claude desktop app refused to start
+sign-in ("points at a different server URL than the one shown here"). To test against a local CMS, add it separately with
+`claude mcp add --transport http local-cms http://localhost:4021/api/mcp` and disable the
+plugin while you do.

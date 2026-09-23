@@ -10,18 +10,20 @@ the post as a file they can type in **and** a preview beside the chat that
 updates by itself, with every change you make for them landing in that same
 file. Do the setup quietly and quickly. The writer never runs a command.
 
-The CMS tools come from this plugin's `cms` server (named
-`mcp__plugin_interactor-writing_cms__*`). If the writer also added
+The CMS tools come from this plugin's `interactor-cms` connector (named
+`mcp__plugin_interactor-writing_interactor-cms__*`). If the writer also added
 `https://cms.interactor.com/api/mcp` by hand, the same tools exist under that
 server's name too. Either works; prefer the plugin's.
 
 ## Open a post
 
 1. **Signed in?** Call `whoami`. If it fails because the CMS isn't connected,
-   tell the writer to sign in once: run `/mcp`, choose the Interactor CMS
-   server (`plugin:interactor-writing:cms`), and approve in the browser. Then
-   continue. Say which organization `whoami` reports if the writer belongs to
-   more than one, so a post never lands in the wrong one.
+   tell the writer to sign in once. In the Claude desktop app: **Settings →
+   Plugins → Interactor Writing → Connectors → interactor-cms → Connect**, then
+   approve in the browser. In Claude Code in a terminal: run `/mcp`, choose
+   `plugin:interactor-writing:interactor-cms`, and authenticate. Then continue.
+   Say which organization `whoami` reports if the writer belongs to more than
+   one, so a post never lands in the wrong one.
 
 2. **Find the post.** Use `list_posts` (or the slug, if the writer gave one)
    and confirm when more than one post matches. For a **new** post, call
