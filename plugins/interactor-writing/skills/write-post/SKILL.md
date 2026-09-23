@@ -1,11 +1,13 @@
 ---
 name: write-post
-description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus a live preview in the browser pane that updates on every save. Use when a writer says "open/edit/work on the post about X", "start a new post about Y", or invokes /write-post.
+description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus a live preview in the browser pane that updates on every save. Use whenever a writer asks to get, show, find, pull up, open, edit or work on a post or draft ("get the post about X", "show me the LLM post", "open the draft on pricing"), or to start a new post, or invokes /write-post. Pulling up a post means opening it this way, not just describing it.
 ---
 
 # Write a post — live editing for writers
 
-The writer should say "open the post about X" and, a few seconds later, have
+Any request to pull up a post ("get", "show", "find", "open", "edit", "work
+on") means opening it here. Don't stop at describing it in chat; the writer
+wants to see it. The writer should say "open the post about X" and, a few seconds later, have
 the post as a file they can type in **and** a preview beside the chat that
 updates by itself, with every change you make for them landing in that same
 file. Do the setup quietly and quickly. The writer never runs a command.
@@ -29,8 +31,10 @@ server's name too. Either works; prefer the plugin's.
    `list_posts` with `search` set to what the writer described (a title word,
    topic or slug). If they said where it's published ("on the website",
    "for product-manager"), call `list_sites` to turn that name into a slug and
-   pass it as `site`. When exactly one post matches, go ahead; when several do,
-   show the few best (title, site, status) and ask which. For a **new** post:
+   pass it as `site`. When exactly one post matches, open it, even if the match
+   is loose (say briefly why it matched, e.g. "the closest is the SEO, AEO &
+   GEO post, which covers LLM search"). The writer can say "not that one".
+   When several match, show the few best (title, site, status) and ask which. For a **new** post:
    call `list_sites`. If the organization has one site, use it; if it has
    several and the writer didn't say, ask which site the post is for. Then call
    `create_post` with the title, `platforms` set to that site's slug, as a
