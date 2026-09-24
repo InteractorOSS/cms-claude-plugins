@@ -1,6 +1,6 @@
 ---
 name: write-post
-description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus the post as an editable, formatted page beside the chat that the writer types on directly. Use whenever a writer asks to get, show, find, pull up, open, edit or work on a post or draft ("get the post about X", "show me the LLM post", "open the draft on pricing"), or to start a new post, or invokes /write-post. Pulling up a post means opening it this way, not just describing it.
+description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus the post as an editable, formatted page beside the chat that the writer types on directly. Use whenever a writer asks to list, get, show, find, pull up, open, edit or work on posts or drafts ("get the post about X", "show me the LLM post", "open the draft on pricing"), or to start a new post, or invokes /write-post. Pulling up a post means opening it this way, not just describing it.
 ---
 
 # Write a post — live editing for writers
