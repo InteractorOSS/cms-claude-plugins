@@ -7,6 +7,7 @@ posts from Claude. Say *"open the post about …"* and you get:
   the CMS as you go,
 - Claude making the changes you ask for, which appear on the same page within a couple of
   seconds,
+- post lists where every title is a link that opens the post in the editor,
 - and a copy of the post as a Markdown file in your folder, kept in sync.
 
 Every save syncs to the CMS. Changes made in the CMS come back into your file. If both
@@ -77,6 +78,18 @@ Claude then checks which account and organization each connection belongs to, us
 that matches what you ask for ("open the draft on my personal blog"), asks when it can't
 tell, and names the account whenever it opens a post. Repeat with another name
 (`interactor-cms-<something>`) for each further account or organization.
+
+## One folder, one account
+
+Tie a folder to one account, organization and site, so every session there works in exactly
+that place. In a Claude session in that folder, say for example:
+
+> use this folder for psdjung@gmail.com, Peter Jung, peterjung.site
+
+Claude checks the connection really is that account and organization, finds the site, and saves
+`.interactor-cms.json` in the folder (no secrets in it). From then on, sessions there use only that
+connection, list only that site's posts, put new posts on it, and stop and tell you if the
+connection is signed in as someone else.
 
 ## Set it up for your whole team (admins)
 

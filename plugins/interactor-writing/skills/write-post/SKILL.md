@@ -34,6 +34,54 @@ the wrong one lands in the wrong place, with no error.
 - **Say it.** When more than one connection exists, name the account as well
   as the organization whenever you open or create a post.
 
+## Bind this folder
+
+A folder can be tied to one account, organization and site, so every session
+started there works in exactly that place, e.g. the `peterjung-site` repo →
+psdjung@gmail.com › Peter Jung › peterjung.site. The binding is
+`.interactor-cms.json` at the folder root, and the plugin reads it at session
+start; when it exists, its connection is the only one to use (see the session
+context).
+
+When the writer asks to bind the folder ("use this folder for …"), or in an
+unbound folder with several connections where they had to pick one (offer to
+remember it):
+
+1. `whoami` on each connection; pick the one whose account and organization
+   match what they said. If none does, tell them which connection to sign in
+   (see "More than one account or organization" in the plugin README) and stop.
+2. `list_sites` on that connection; pick the site they named (match its name
+   or slug; ask if unclear).
+3. Write `.interactor-cms.json` in the folder:
+
+   ```json
+   {
+     "connection": "<connection name, e.g. interactor-cms-personal>",
+     "account": "<whoami user.email>",
+     "organization": "<whoami organization.name>",
+     "organization_id": "<whoami organization.id>",
+     "site": "<site slug>"
+   }
+   ```
+
+   It holds no secrets; the writer can commit it or not.
+4. Confirm in one line: "This folder now always uses psdjung@gmail.com ›
+   Peter Jung › peterjung.site." It applies from the next session on; in this
+   session, follow it from now.
+
+To change or remove a binding, edit or delete that file (or ask you to).
+
+## Listing posts
+
+Always make each title a Markdown link to
+`https://cms.interactor.com/write?post=<post id>`: clicking it opens the post
+in the editor using the writer's CMS sign-in (a signed-out browser goes to
+sign-in and comes straight back). Show site and status beside each, and end
+with: "Click a title to open it in the editor, or tell me which one to open."
+If the writer later asks you to change a post they opened from a link, you
+can open it the usual way below (their page and yours stay in step), or use
+`edit_post_content` for a small change.
+
 ## Open a post
 
 1. **Signed in?** The `whoami` calls above tell you. If no connection is
