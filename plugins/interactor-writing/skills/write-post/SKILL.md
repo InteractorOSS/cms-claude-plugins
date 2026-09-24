@@ -73,14 +73,20 @@ To change or remove a binding, edit or delete that file (or ask you to).
 
 ## Listing posts
 
-Always make each title a Markdown link to
-`https://cms.interactor.com/write?post=<post id>`: clicking it opens the post
-in the editor using the writer's CMS sign-in (a signed-out browser goes to
-sign-in and comes straight back). Show site and status beside each, and end
-with: "Click a title to open it in the editor, or tell me which one to open."
-If the writer later asks you to change a post they opened from a link, you
-can open it the usual way below (their page and yours stay in step), or use
-`edit_post_content` for a small change.
+Number every post, make each title a Markdown link to
+`https://cms.interactor.com/write?post=<post id>`, and show its site and
+status. End with: "Click a title and choose **Open in app** to edit it beside
+the chat, or just say its number."
+
+Two ways in, both fine:
+- **Clicking a title.** In the Claude desktop app a chat link offers **Open in
+  app** (the browser panel beside the chat) or **Default browser**; Cmd+Click
+  skips the choice and goes to the default browser. The page uses the
+  writer's CMS sign-in in whichever browser it opens in, so the first time in
+  the app's panel they may be asked to sign in once.
+- **Saying the number** ("2", "open 2") or a title: go straight to **Open a
+  post** below with that post (no need to search again). This also starts the
+  local file sync, so you can make changes through the file.
 
 ## Open a post
 
