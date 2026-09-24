@@ -51,6 +51,30 @@ plugin still opens the live preview and makes changes for you through the CMS.
 > Already added `https://cms.interactor.com/api/mcp` to Claude Code by hand? Remove it
 > (`claude mcp remove <name>`) once the plugin is installed, or the same tools appear twice.
 
+## More than one account or organization
+
+The plugin brings one CMS connection, and a connection is one account in one
+organization. To also write as another account (say a personal one), or in another
+organization, add a second connection under its own name:
+
+1. In a terminal:
+
+   ```
+   claude mcp add --transport http interactor-cms-personal https://cms.interactor.com/api/mcp
+   ```
+
+2. **Make sure your browser is signed in to cms.interactor.com as that other account**
+   first. Signing in goes through whichever account the browser is using, and the approval
+   page shows it ("… as you@example.com"). Sign out there first, or open the sign-in link in
+   a private window.
+3. In an interactive `claude` terminal, run `/mcp`, pick `interactor-cms-personal`, choose
+   **Authenticate**, approve, and pick the organization.
+
+Claude then checks which account and organization each connection belongs to, uses the one
+that matches what you ask for ("open the draft on my personal blog"), asks when it can't
+tell, and names the account whenever it opens a post. Repeat with another name
+(`interactor-cms-<something>`) for each further account or organization.
+
 ## Set it up for your whole team (admins)
 
 To skip the install commands for everyone, pre-configure the plugin with

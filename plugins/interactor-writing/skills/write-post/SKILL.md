@@ -8,24 +8,41 @@ description: Open an Interactor CMS post or draft for live editing — a local M
 Any request to pull up a post ("get", "show", "find", "open", "edit", "work
 on") means opening it here. Don't stop at describing it in chat; the writer
 wants to see it. The writer should say "open the post about X" and, a few seconds later, have
-the post as a file they can type in **and** a preview beside the chat that
-updates by itself, with every change you make for them landing in that same
-file. Do the setup quietly and quickly. The writer never runs a command.
+the post beside the chat, formatted, to type on directly, with every change
+you make for them appearing on that same page. Do the setup quietly and quickly. The writer never runs a command.
 
-The CMS tools come from this plugin's `interactor-cms` connector (named
-`mcp__plugin_interactor-writing_interactor-cms__*`). If the writer also added
-`https://cms.interactor.com/api/mcp` by hand, the same tools exist under that
-server's name too. Either works; prefer the plugin's.
+## Which account (read this first)
+
+The CMS tools come from this plugin's `interactor-cms` connection (tools named
+`mcp__plugin_interactor-writing_interactor-cms__*`), and possibly from more
+connections the writer added for other accounts or organizations, e.g.
+`interactor-cms-personal` (tools `mcp__interactor-cms-personal__*`). Every
+connection is **one account in one organization**, and a post written through
+the wrong one lands in the wrong place, with no error.
+
+- **Map them once per session.** Call `whoami` on every CMS connection you
+  have and note each one's account (`user.email`) and organization
+  (`organization.name`). Skip any that aren't signed in.
+- **Pick per request.** Use the connection whose account or organization
+  matches what the writer said ("on my personal blog", "for Interactor",
+  "with my gmail account"). With only one signed-in connection, use it. With
+  several and nothing to go on, **ask**, listing them as
+  "account · organization". Don't guess.
+- **Stay on it.** Every call for that post (search, open, create, checkpoint,
+  workflow) goes through the same connection. Tools from different
+  connections can't see each other's posts.
+- **Say it.** When more than one connection exists, name the account as well
+  as the organization whenever you open or create a post.
 
 ## Open a post
 
-1. **Signed in?** Call `whoami`. If it fails because the CMS isn't connected,
-   tell the writer to sign in once. In the Claude desktop app: **Settings →
-   Plugins → Interactor Writing → Connectors → interactor-cms → Connect**, then
-   approve in the browser. In Claude Code in a terminal: run `/mcp`, choose
-   `plugin:interactor-writing:interactor-cms`, and authenticate. Then continue.
-   Say which organization `whoami` reports if the writer belongs to more than
-   one, so a post never lands in the wrong one.
+1. **Signed in?** The `whoami` calls above tell you. If no connection is
+   signed in, tell the writer to sign in once. In the Claude desktop app:
+   **Settings → Plugins → Interactor Writing → Connectors → interactor-cms →
+   Connect**, then approve in the browser. In Claude Code in a terminal: run
+   `/mcp`, choose `plugin:interactor-writing:interactor-cms`, and
+   authenticate. If they want a second account or organization, point them to
+   "More than one account or organization" in the plugin's README.
 
 2. **Find the post.** Search, don't page through everything: call
    `list_posts` with `search` set to what the writer described (a title word,
@@ -66,7 +83,8 @@ server's name too. Either works; prefer the plugin's.
    read-only page for sending to reviewers.) Then tell them in a line or two,
    **always naming the organization (from `whoami`) and the post's site(s)**:
    e.g. "Opened *SEO, AEO & GEO* (Interactor · website). Type right on the page
-   beside the chat, or ask me for changes." A
+   beside the chat, or ask me for changes." With more than one connection,
+   add the account: "(peter@interactor.com · Interactor · website)". A
    writer who meant a different org or site should be able to catch it from
    that one line. The org is fixed by the CMS connection (to use another,
    reconnect and pick it on the approval page), so don't ask for it; state it.
