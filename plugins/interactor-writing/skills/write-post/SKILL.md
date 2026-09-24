@@ -150,10 +150,14 @@ and yours stay in step) or use `edit_post_content` for a small change.
    can't be edited. The file is for your own edits, not theirs.
 
    Then tell them in a line or two where to type, **always naming the
-   organization (from `whoami`) and the post's site(s)**: e.g. "Opened *SEO,
-   AEO & GEO* (Interactor · website) in the browser panel on the right (globe
-   icon). Click into the text and type; it saves as you go. Or ask me for
-   changes." With more than one connection, add the account: "(peter@interactor.com
+   organization (from `whoami`) and the post's site(s)**, and **always make the
+   post's title a link** to `https://cms.interactor.com/write?post=<post id>`
+   (safe to show: no key in it; it reopens the editor with their CMS sign-in,
+   in their web browser). Never put `editor_url` in chat, since it carries the key.
+   E.g. "Opened [SEO, AEO & GEO](https://cms.interactor.com/write?post=…)
+   (Interactor · website) in the browser panel on the right (globe icon).
+   Click into the text and type; it saves as you go. Or ask me for changes."
+   The same goes for a post you just created. With more than one connection, add the account: "(peter@interactor.com
    · Interactor · website)". A writer who meant a different org or site should
    be able to catch it from that one line. The org is fixed by the CMS
    connection (to use another, reconnect and pick it on the approval page), so
