@@ -77,17 +77,29 @@ the wrong one lands in the wrong place, with no error.
    editing needs Node.js from nodejs.org (a one-time install), and meanwhile
    offer the preview-only mode below.
 
-5. **Show it.** Open **`editor_url`** in the built-in browser pane. That's the
-   post formatted, and the writer types on it directly, like a document; it
-   saves to the CMS as they go. (Don't open `preview_url` there: that's the
-   read-only page for sending to reviewers.) Then tell them in a line or two,
-   **always naming the organization (from `whoami`) and the post's site(s)**:
-   e.g. "Opened *SEO, AEO & GEO* (Interactor · website). Type right on the page
-   beside the chat, or ask me for changes." With more than one connection,
-   add the account: "(peter@interactor.com · Interactor · website)". A
-   writer who meant a different org or site should be able to catch it from
-   that one line. The org is fixed by the CMS connection (to use another,
-   reconnect and pick it on the approval page), so don't ask for it; state it.
+5. **Show it.** Open **`editor_url`** in the app's built-in **browser panel**
+   (the browser tool's navigate / open-URL action; in the Claude desktop app
+   that is the pane behind the globe icon), then check the page loaded: a white
+   page with a formatting toolbar and "Saved to CMS" at the top right. That's
+   the post formatted, and the writer types on it directly, like a document; it
+   saves to the CMS as they go. Don't open `preview_url` there: that's the
+   read-only page for sending to reviewers.
+
+   **Don't point the writer at the local file.** Don't link
+   `posts/<filename>` in your message or open it in the file viewer: the
+   app's file viewer shows Markdown as a formatted but **read-only** page that
+   looks almost like the editor, and writers click it and conclude the page
+   can't be edited. The file is for your own edits, not theirs.
+
+   Then tell them in a line or two where to type, **always naming the
+   organization (from `whoami`) and the post's site(s)**: e.g. "Opened *SEO,
+   AEO & GEO* (Interactor · website) in the browser panel on the right (globe
+   icon). Click into the text and type; it saves as you go. Or ask me for
+   changes." With more than one connection, add the account: "(peter@interactor.com
+   · Interactor · website)". A writer who meant a different org or site should
+   be able to catch it from that one line. The org is fixed by the CMS
+   connection (to use another, reconnect and pick it on the approval page), so
+   don't ask for it; state it.
 
 ## While it's open
 
