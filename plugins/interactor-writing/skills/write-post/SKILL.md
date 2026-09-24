@@ -11,65 +11,97 @@ wants to see it. The writer should say "open the post about X" and, a few second
 the post beside the chat, formatted, to type on directly, with every change
 you make for them appearing on that same page. Do the setup quietly and quickly. The writer never runs a command.
 
-## Which account (read this first)
+## Where to work: workspaces (read this first)
 
-The CMS tools come from this plugin's `interactor-cms` connection (tools named
-`mcp__plugin_interactor-writing_interactor-cms__*`), and possibly from more
-connections the writer added for other accounts or organizations, e.g.
-`interactor-cms-personal` (tools `mcp__interactor-cms-personal__*`). Every
-connection is **one account in one organization**, and a post written through
-the wrong one lands in the wrong place, with no error.
+The CMS tools come from this plugin's one connection, `interactor-cms` (tools
+named `mcp__plugin_interactor-writing_interactor-cms__*`). Signed in with
+**All my organizations**, that one connection reaches every organization and
+site of every account the writer added on the sign-in page ("Add another
+account"). Each call says where it acts with its `workspace` argument:
 
-- **Map them once per session.** Call `whoami` on every CMS connection you
-  have and note each one's account (`user.email`) and organization
-  (`organization.name`). Skip any that aren't signed in.
-- **Pick per request.** Use the connection whose account or organization
-  matches what the writer said ("on my personal blog", "for Interactor",
-  "with my gmail account"). With only one signed-in connection, use it. With
-  several and nothing to go on, **ask**, listing them as
-  "account · organization". Don't guess.
-- **Stay on it.** Every call for that post (search, open, create, checkpoint,
-  workflow) goes through the same connection. Tools from different
-  connections can't see each other's posts.
-- **Say it.** When more than one connection exists, name the account as well
-  as the organization whenever you open or create a post.
+    <account email>/<organization slug>/<site slug>
+    e.g. psdjung@gmail.com/peter-jung/peterjung-site
+
+`list_workspaces` lists every workspace the connection can reach, with the
+organization's name and the writer's role there. A post written in the wrong
+workspace lands in the wrong place, so:
+
+- **This folder decides.** Each folder is bound to one workspace (see "Bind
+  this folder"). The session context shows the binding. When there is one,
+  pass that `workspace` on **every** CMS call (search, open, create,
+  checkpoint, workflow, social, trash) and never another, unless the writer
+  explicitly asks to cross over.
+- **Unbound folder:** before the first CMS call, `list_workspaces` and ask
+  which one this folder is for. List them as "account · organization ·
+  site"; skip the organization-wide entries when the organization has sites.
+  Then bind the folder to the answer. If a matching workspace is already
+  bound to another folder (the session context lists them), say so and offer
+  to switch there first (see "Another folder already has it").
+- **Old connection:** if `whoami` or `list_workspaces` shows
+  `all_organizations: false`, the writer signed in before this existed and
+  the connection covers one organization only. Say so, and ask them to
+  reconnect once: in the Claude desktop app, **Settings → Plugins →
+  Interactor Writing → Connectors → interactor-cms → Disconnect, then
+  Connect**; in a terminal, `/mcp` → `plugin:interactor-writing:interactor-cms`
+  → **Re-authenticate**. On the sign-in page keep **All my organizations**,
+  and use **Add another account** for each other CMS account they write under.
+- **Missing account:** if the writer means an account `list_workspaces`
+  doesn't show, they add it the same way: reconnect and choose "Add another
+  account". Don't suggest adding connections by hand.
+- **Say it.** Whenever you open or create a post, name the account,
+  organization and site it's in.
 
 ## Bind this folder
 
-A folder can be tied to one account, organization and site, so every session
-started there works in exactly that place, e.g. the `peterjung-site` repo →
-psdjung@gmail.com › Peter Jung › peterjung.site. The binding is
-`.interactor-cms.json` at the folder root, and the plugin reads it at session
-start; when it exists, its connection is the only one to use (see the session
-context).
+A folder is bound to one workspace, so every session started there works in
+exactly that place, e.g. `~/…/peterjung-site` → psdjung@gmail.com ›
+Peter Jung › peterjung.site. Bind when the writer asks ("use this folder for
+…"), or when an unbound folder's writer picks a workspace (do it; just say
+so):
 
-When the writer asks to bind the folder ("use this folder for …"), or in an
-unbound folder with several connections where they had to pick one (offer to
-remember it):
-
-1. `whoami` on each connection; pick the one whose account and organization
-   match what they said. If none does, tell them which connection to sign in
-   (see "More than one account or organization" in the plugin README) and stop.
-2. `list_sites` on that connection; pick the site they named (match its name
-   or slug; ask if unclear).
-3. Write `.interactor-cms.json` in the folder:
+1. `list_workspaces`; pick the one matching what they said (account,
+   organization name or slug, site name or slug). Ask if unclear.
+2. Write `.interactor-cms.json` at the folder root:
 
    ```json
    {
-     "connection": "<connection name, e.g. interactor-cms-personal>",
-     "account": "<whoami user.email>",
-     "organization": "<whoami organization.name>",
-     "organization_id": "<whoami organization.id>",
+     "workspace": "<the workspace, e.g. psdjung@gmail.com/peter-jung/peterjung-site>",
+     "account": "<account email>",
+     "organization": "<organization name>",
      "site": "<site slug>"
    }
    ```
 
    It holds no secrets; the writer can commit it or not.
-4. Confirm in one line: "This folder now always uses psdjung@gmail.com ›
-   Peter Jung › peterjung.site." It applies from the next session on; in this
-   session, follow it from now.
+3. Record the folder in the writer's folder list,
+   `~/.interactor-writing/folders.json` (create it if missing): a JSON object
+   mapping each workspace to its folder's absolute path, e.g.
+   `{"psdjung@gmail.com/peter-jung/peterjung-site": "/Users/…/peterjung-site"}`.
+   Replace an older entry for the same workspace; keep the others.
+4. Confirm in one line: "This folder now works in psdjung@gmail.com ›
+   Peter Jung › peterjung.site."
 
-To change or remove a binding, edit or delete that file (or ask you to).
+A binding file from an older version has `connection` and `organization_id`
+but no `workspace`: `list_workspaces`, find the entry with that account,
+organization and site, and rewrite the file with its `workspace` (step 2-3).
+To change or remove a binding, edit or delete the file (or ask you to).
+
+## Another folder already has it
+
+The session context lists the writer's bound folders. When the writer asks
+for something in a workspace that another folder is bound to (by site,
+organization or account), or picks one in an unbound folder that another
+folder already has, say where it lives and offer to move there:
+"You work on peterjung.site in ~/…/peterjung-site. Switch there?"
+
+- **Yes:** if you have a tool that changes this session's working folder (in
+  the Claude desktop app, a "change directory" tool), use it with that path,
+  then carry on with the request there. Otherwise tell them to start a new
+  session in that folder (give the path) and repeat the request there.
+- **No:** do it from here, passing that workspace explicitly for this
+  request, and don't bind this folder to it.
+- The folder no longer exists: drop it from `folders.json` and treat the
+  workspace as unbound.
 
 ## Listing posts
 
@@ -94,13 +126,14 @@ and yours stay in step) or use `edit_post_content` for a small change.
 
 ## Open a post
 
-1. **Signed in?** The `whoami` calls above tell you. If no connection is
-   signed in, tell the writer to sign in once. In the Claude desktop app:
-   **Settings → Plugins → Interactor Writing → Connectors → interactor-cms →
-   Connect**, then approve in the browser. In Claude Code in a terminal: run
-   `/mcp`, choose `plugin:interactor-writing:interactor-cms`, and
-   authenticate. If they want a second account or organization, point them to
-   "More than one account or organization" in the plugin's README.
+1. **Signed in, and where?** If the connection isn't signed in, tell the
+   writer to sign in once. In the Claude desktop app: **Settings → Plugins →
+   Interactor Writing → Connectors → interactor-cms → Connect**; in Claude Code
+   in a terminal: `/mcp` → `plugin:interactor-writing:interactor-cms` →
+   authenticate. On the sign-in page: keep **All my organizations**, and use
+   **Add another account** for each other CMS account they write under. Know
+   the workspace (see "Where to work") before going on, and pass it as
+   `workspace` on every call below.
 
 2. **Find the post.** Search, don't page through everything: call
    `list_posts` with `search` set to what the writer described (a title word,
@@ -157,18 +190,17 @@ and yours stay in step) or use `edit_post_content` for a small change.
    can't be edited. The file is for your own edits, not theirs.
 
    Then tell them in a line or two where to type, **always naming the
-   organization (from `whoami`) and the post's site(s)**, and **always make the
+   account, organization and the post's site(s)** (from the workspace), and **always make the
    post's title a link** to `https://cms.interactor.com/write?post=<post id>`
    (safe to show: no key in it; it reopens the editor with their CMS sign-in,
    in their web browser). Never put `editor_url` in chat, since it carries the key.
    E.g. "Opened [SEO, AEO & GEO](https://cms.interactor.com/write?post=…)
    (Interactor · website) in the browser panel on the right (globe icon).
    Click into the text and type; it saves as you go. Or ask me for changes."
-   The same goes for a post you just created. With more than one connection, add the account: "(peter@interactor.com
-   · Interactor · website)". A writer who meant a different org or site should
-   be able to catch it from that one line. The org is fixed by the CMS
-   connection (to use another, reconnect and pick it on the approval page), so
-   don't ask for it; state it.
+   The same goes for a post you just created. With more than one account on
+   the connection, add the account: "(peter@interactor.com · Interactor ·
+   website)". A writer who meant a different place should be able to catch it
+   from that one line.
 
 ## While it's open
 

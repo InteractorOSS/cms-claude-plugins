@@ -58,44 +58,33 @@ plugin still opens the live preview and makes changes for you through the CMS.
 > Already added `https://cms.interactor.com/api/mcp` to Claude Code by hand? Remove it
 > (`claude mcp remove <name>`) once the plugin is installed, or the same tools appear twice.
 
-## More than one account or organization
+## Several accounts, organizations and sites
 
-The plugin brings one CMS connection, and a connection is one account in one
-organization. To also write as another account (say a personal one), or in another
-organization, add a second connection under its own name:
+One sign-in covers all of them. On the CMS sign-in page:
 
-1. In a terminal:
+- keep **All my organizations** selected, and
+- click **Add another account** for each other CMS account you write under (a work and a
+  personal one, say). You sign in as that account, come back to the same page, and repeat.
 
-   ```
-   claude mcp add --transport http -s user interactor-cms-personal https://cms.interactor.com/api/mcp
-   ```
+That's all: no extra connections to add. Every account's organizations and sites are
+reachable from the one connection, and each folder picks where it works (below).
 
-   Keep `-s user`: without it the connection is saved only for the folder you ran the
-   command in, and your writing folder won't see it.
+Signed in before this existed? Reconnect once. In the desktop app: **Settings → Plugins →
+Interactor Writing → Connectors → interactor-cms → Disconnect**, then **Connect**. In a
+terminal: `/mcp` → `plugin:interactor-writing:interactor-cms` → **Re-authenticate**.
 
-2. **Make sure your browser is signed in to cms.interactor.com as that other account**
-   first. Signing in goes through whichever account the browser is using, and the approval
-   page shows it ("… as you@example.com"). Sign out there first, or open the sign-in link in
-   a private window.
-3. In an interactive `claude` terminal, run `/mcp`, pick `interactor-cms-personal`, choose
-   **Authenticate**, approve, and pick the organization.
+## One folder, one place
 
-Claude then checks which account and organization each connection belongs to, uses the one
-that matches what you ask for ("open the draft on my personal blog"), asks when it can't
-tell, and names the account whenever it opens a post. Repeat with another name
-(`interactor-cms-<something>`) for each further account or organization.
-
-## One folder, one account
-
-Tie a folder to one account, organization and site, so every session there works in exactly
-that place. In a Claude session in that folder, say for example:
+Each folder works in one account › organization › site. The first time you ask for a post in a
+new folder, Claude lists where you can write and asks which one this folder is for, then remembers
+it in `.interactor-cms.json` (no secrets in it). You can also say it outright:
 
 > use this folder for psdjung@gmail.com, Peter Jung, peterjung.site
 
-Claude checks the connection really is that account and organization, finds the site, and saves
-`.interactor-cms.json` in the folder (no secrets in it). From then on, sessions there use only that
-connection, list only that site's posts, put new posts on it, and stop and tell you if the
-connection is signed in as someone else.
+From then on, sessions there work only in that place: lists show that site's posts and new posts
+go on it. Claude also keeps a list of your folders (`~/.interactor-writing/folders.json`), so if
+you ask for peterjung.site from another folder, it tells you where that lives and offers to
+switch there.
 
 ## Set it up for your whole team (admins)
 
@@ -113,8 +102,8 @@ To skip the install commands for everyone, pre-configure the plugin with
   instead of replacing it.
 - **Just you:** add the same two keys to `~/.claude/settings.json`.
 
-Each writer still signs in to the CMS once, the first time they use it: that sign-in is
-what decides which organization and sites Claude may write to.
+Each writer still signs in to the CMS once, the first time they use it, keeping **All my
+organizations** and adding any other accounts they write under.
 
 ## How it works
 
