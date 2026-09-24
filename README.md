@@ -7,7 +7,8 @@ posts from Claude. Say *"open the post about …"* and you get:
   the CMS as you go,
 - Claude making the changes you ask for, which appear on the same page within a couple of
   seconds,
-- post lists where every title is a link that opens the post in the editor,
+- your post list in the panel too: click a post to open it in the editor, with a way back to the
+  list,
 - and a copy of the post as a Markdown file in your folder, kept in sync.
 
 Every save syncs to the CMS. Changes made in the CMS come back into your file. If both

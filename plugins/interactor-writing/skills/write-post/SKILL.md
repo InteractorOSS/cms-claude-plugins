@@ -73,18 +73,24 @@ To change or remove a binding, edit or delete that file (or ask you to).
 
 ## Listing posts
 
-Number every post, make each title a Markdown link to
-`https://cms.interactor.com/write?post=<post id>`, and show its site and
-status. End with: "Say a number to open it here beside the chat. (Clicking a
-title opens it in your web browser instead.)"
+Put the list where clicks work: in the app's **browser panel**.
 
-- **Saying the number** ("2", "open 2") or a title is the main path: go
-  straight to **Open a post** below with that post (no need to search again).
-  That puts the editor in the app's browser panel and starts the local file
-  sync, so you can make changes through the file.
-- **Clicking a title** opens the editor in the writer's default browser
-  (Safari, Chrome), using their CMS sign-in there. Clicking a chat link does
-  not reach the app's browser panel; don't tell the writer it will.
+1. Call `open_post_list`, with `site` set to the folder's bound site (if the
+   folder is bound) and `search` if the writer described what they're after.
+2. Open the returned `list_url` with your browser tool in the browser panel.
+   It's the writer's post list: search, status, sites, last updated. Clicking
+   a post opens the editor in the same panel, with "← All posts" to come back.
+   `list_url` carries a short-lived key (list and open only, 8 hours): open
+   it, never paste it in chat.
+3. In the chat, give a short numbered list (plain titles, site, status; no
+   links: a chat link opens the system browser, not the panel) and end with:
+   "Click a post in the panel on the right, or tell me its number."
+
+When the writer answers with a number or a title, go straight to **Open a
+post** below with that post. That also starts the local file sync, so you
+can make changes through the file. If they opened a post by clicking in the
+panel and then ask you for a change, open it the usual way too (their page
+and yours stay in step) or use `edit_post_content` for a small change.
 
 ## Open a post
 
