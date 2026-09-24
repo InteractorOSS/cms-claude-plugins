@@ -113,7 +113,12 @@ and yours stay in step) or use `edit_post_content` for a small change.
    call `list_sites`. If the organization has one site, use it; if it has
    several and the writer didn't say, ask which site the post is for. Then call
    `create_post` with the title, `platforms` set to that site's slug, as a
-   markdown draft, and use what it returns.
+   markdown draft, and use what it returns. If a post with that title
+   already exists, don't make a duplicate: use the existing one.
+
+   Either way, **continue straight to step 3 and open it.** Creating a post
+   (or finding it already exists) is never the end of the request, and never
+   a reason to ask "want me to open it?".
 
 3. **Open it:** `open_for_editing` with the post's `id`, **once**. Each call
    ends the previous editing session for that post, so a second call cuts off
