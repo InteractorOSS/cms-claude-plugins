@@ -116,7 +116,9 @@ Put the list where clicks work: in the app's **browser panel**.
 
 1. Call `open_post_list`, with `site` set to the folder's bound site (if the
    folder is bound) and `search` if the writer described what they're after.
-2. Open the returned `list_url` with your browser tool in the browser panel.
+2. Open the returned `list_url` in the browser panel the same way (the
+   open-a-URL action, `preview_start` with `url` in the desktop app, not
+   `navigate`), so the writer gets the "Opened in Browser" card.
    It's the writer's post list: search, status, sites, last updated. Clicking
    a post opens the editor in the same panel, with "← All posts" to come back.
    `list_url` carries a short-lived key (list and open only, 8 hours): open
@@ -183,8 +185,10 @@ and yours stay in step) or use `edit_post_content` for a small change.
    offer the preview-only mode below.
 
 5. **Show it.** Open **`editor_url`** in the app's built-in **browser panel**
-   (the browser tool's navigate / open-URL action; in the Claude desktop app
-   that is the pane behind the globe icon), then check the page loaded: a white
+   with the action that OPENS A URL IN THE PANEL (in the Claude desktop app:
+   `preview_start` with `url`), not `navigate`: opening shows the writer an
+   "Opened in Browser" card in the chat that brings the panel back when
+   clicked, and `navigate` shows none. Then check the page loaded: a white
    page with a formatting toolbar and "Saved to CMS" at the top right. That's
    the post formatted, and the writer types on it directly, like a document; it
    saves to the CMS as they go. Don't open `preview_url` there: that's the

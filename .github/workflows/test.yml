@@ -8,4 +8,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: node --test tests/live-sync.test.mjs
+      - run: node --test tests/live-sync.test.mjs tests/check-reply.test.mjs
