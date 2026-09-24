@@ -60,8 +60,11 @@ organization, add a second connection under its own name:
 1. In a terminal:
 
    ```
-   claude mcp add --transport http interactor-cms-personal https://cms.interactor.com/api/mcp
+   claude mcp add --transport http -s user interactor-cms-personal https://cms.interactor.com/api/mcp
    ```
+
+   Keep `-s user`: without it the connection is saved only for the folder you ran the
+   command in, and your writing folder won't see it.
 
 2. **Make sure your browser is signed in to cms.interactor.com as that other account**
    first. Signing in goes through whichever account the browser is using, and the approval
