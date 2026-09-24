@@ -1,6 +1,6 @@
 ---
 name: write-post
-description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus a live preview in the browser pane that updates on every save. Use whenever a writer asks to get, show, find, pull up, open, edit or work on a post or draft ("get the post about X", "show me the LLM post", "open the draft on pricing"), or to start a new post, or invokes /write-post. Pulling up a post means opening it this way, not just describing it.
+description: Open an Interactor CMS post or draft for live editing — a local Markdown file the writer (and Claude) edit directly, kept in two-way sync with the CMS, plus the post as an editable, formatted page beside the chat that the writer types on directly. Use whenever a writer asks to get, show, find, pull up, open, edit or work on a post or draft ("get the post about X", "show me the LLM post", "open the draft on pricing"), or to start a new post, or invokes /write-post. Pulling up a post means opening it this way, not just describing it.
 ---
 
 # Write a post — live editing for writers
@@ -42,10 +42,11 @@ server's name too. Either works; prefer the plugin's.
 
 3. **Open it:** `open_for_editing` with the post's `id`, **once**. Each call
    ends the previous editing session for that post, so a second call cuts off
-   a sync tool that's already running. Keep the `preview_url` it returns and
-   reuse it instead of calling again. It returns
-   `preview_url`, `edit_key`, `file_url` and `filename`. Treat `edit_key` as a
-   secret: pass it only to the sync tool below, never echo it to the writer.
+   a sync tool that's already running. Keep what it returns and reuse it
+   instead of calling again: `editor_url`, `preview_url`, `edit_key`,
+   `file_url` and `filename`. Treat `edit_key` and `editor_url` (which carries
+   the key) as secrets: the key goes only to the sync tool below and the URL
+   only into the browser pane. Never echo either in chat.
 
 4. **Start the sync** with Bash, `run_in_background: true`, from the writer's
    working folder:
@@ -59,11 +60,13 @@ server's name too. Either works; prefer the plugin's.
    editing needs Node.js from nodejs.org (a one-time install), and meanwhile
    offer the preview-only mode below.
 
-5. **Show it.** Open `preview_url` in the built-in browser pane, and open
-   `posts/<filename>` for the writer if the app can show files. Then tell them
-   in a line or two, **always naming the organization (from `whoami`) and the
-   post's site(s)**: e.g. "Opened *SEO, AEO & GEO* (Interactor · website).
-   Type in the file or ask me for changes; the preview updates on its own." A
+5. **Show it.** Open **`editor_url`** in the built-in browser pane. That's the
+   post formatted, and the writer types on it directly, like a document; it
+   saves to the CMS as they go. (Don't open `preview_url` there: that's the
+   read-only page for sending to reviewers.) Then tell them in a line or two,
+   **always naming the organization (from `whoami`) and the post's site(s)**:
+   e.g. "Opened *SEO, AEO & GEO* (Interactor · website). Type right on the page
+   beside the chat, or ask me for changes." A
    writer who meant a different org or site should be able to catch it from
    that one line. The org is fixed by the CMS connection (to use another,
    reconnect and pick it on the approval page), so don't ask for it; state it.
@@ -71,8 +74,12 @@ server's name too. Either works; prefer the plugin's.
 ## While it's open
 
 - **Make every change by editing `posts/<filename>`** (Edit/Write), and
-  re-read it first: the writer may have typed, or the sync may have pulled a
-  change from the CMS. Don't use `update_post` or `edit_post_content` on this
+  re-read it first: the writer may have typed on the page, and the sync pulls
+  their saves into the file. Your saves appear on their page within a couple
+  of seconds, applied while they pause so their cursor doesn't jump. If you
+  both change the same sentence, the page asks them which version to keep;
+  if they mention that prompt, explain it's their choice and neither version
+  is lost until they pick. Don't use `update_post` or `edit_post_content` on this
   post while the sync runs, because they write around the file.
 - **Before a sweeping change** (rewriting a whole section, restructuring,
   changing the tone throughout), call `checkpoint_post` with a short label,
@@ -101,13 +108,12 @@ server's name too. Either works; prefer the plugin's.
   reports `token.kind: "connection"` with `refreshes_automatically`. Only a
   real refusal (a 401 from the CMS tools) means they need to sign in again.
 
-## Preview-only mode (no Node.js)
+## Without Node.js
 
-Call `open_for_editing` just for the `preview_url`, open it in the browser
-pane, and make changes with `edit_post_content` (small, anchored edits) or
-`update_post`. The preview still updates on its own within a couple of
-seconds. The writer can't type in a local file in this mode, so they type in
-the CMS editor instead.
+The page still works: call `open_for_editing`, open `editor_url` in the
+browser pane, and the writer types on it as usual. There's just no local
+file, so make your changes with `edit_post_content` (small, anchored edits) or
+`update_post`; they appear on the writer's page on their own.
 
 ## Finish
 

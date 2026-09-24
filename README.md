@@ -3,9 +3,11 @@
 **Interactor Writing** lets you write and edit [Interactor CMS](https://cms.interactor.com)
 posts from Claude. Say *"open the post about …"* and you get:
 
-- the post as a Markdown file in your folder, which you can type in directly,
-- a live preview beside the chat that updates within a couple of seconds of every save,
-- Claude making the changes you ask for in that same file.
+- the post beside the chat, formatted, and you type right on it like a document: it saves to
+  the CMS as you go,
+- Claude making the changes you ask for, which appear on the same page within a couple of
+  seconds,
+- and a copy of the post as a Markdown file in your folder, kept in sync.
 
 Every save syncs to the CMS. Changes made in the CMS come back into your file. If both
 change at once, nothing is overwritten: you get both versions to merge. Publishing and
