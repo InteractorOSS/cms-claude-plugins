@@ -75,18 +75,16 @@ To change or remove a binding, edit or delete that file (or ask you to).
 
 Number every post, make each title a Markdown link to
 `https://cms.interactor.com/write?post=<post id>`, and show its site and
-status. End with: "Click a title and choose **Open in app** to edit it beside
-the chat, or just say its number."
+status. End with: "Say a number to open it here beside the chat. (Clicking a
+title opens it in your web browser instead.)"
 
-Two ways in, both fine:
-- **Clicking a title.** In the Claude desktop app a chat link offers **Open in
-  app** (the browser panel beside the chat) or **Default browser**; Cmd+Click
-  skips the choice and goes to the default browser. The page uses the
-  writer's CMS sign-in in whichever browser it opens in, so the first time in
-  the app's panel they may be asked to sign in once.
-- **Saying the number** ("2", "open 2") or a title: go straight to **Open a
-  post** below with that post (no need to search again). This also starts the
-  local file sync, so you can make changes through the file.
+- **Saying the number** ("2", "open 2") or a title is the main path: go
+  straight to **Open a post** below with that post (no need to search again).
+  That puts the editor in the app's browser panel and starts the local file
+  sync, so you can make changes through the file.
+- **Clicking a title** opens the editor in the writer's default browser
+  (Safari, Chrome), using their CMS sign-in there. Clicking a chat link does
+  not reach the app's browser panel; don't tell the writer it will.
 
 ## Open a post
 
