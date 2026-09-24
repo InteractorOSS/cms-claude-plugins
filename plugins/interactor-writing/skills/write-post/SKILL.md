@@ -187,6 +187,11 @@ and yours stay in step) or use `edit_post_content` for a small change.
 - The frontmatter is fair game (title, excerpt, tags, `meta_description`, …)
   except `id`. **Don't change `status` in the file**: the CMS refuses it.
   Submitting, approving and publishing go through `post_workflow`.
+- **Write it to be found.** When you draft a new post or rewrite a large part
+  of one, follow the `optimize-post` skill (answer first, question headings,
+  real evidence, title and meta description). Before any `post_workflow`
+  submit or publish, run its checklist and give the writer its short report.
+  Never invent a statistic, quote or source to satisfy it: ask the writer.
 - Check the sync's output after edits and translate for the writer:
   - `saved to CMS`: nothing to say; the preview already shows it.
   - `pulled a change made in the CMS`: mention it if it affects what they're

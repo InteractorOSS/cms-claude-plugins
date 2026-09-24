@@ -11,6 +11,11 @@ posts from Claude. Say *"open the post about …"* and you get:
   list,
 - and a copy of the post as a Markdown file in your folder, kept in sync.
 
+Claude also writes every post to be found: by search engines (SEO), by answer boxes and AI
+Overviews (AEO), and by AI assistants that cite sources (GEO). It leads with the answer,
+uses real evidence and sources, fills in the title and meta description, and tells you what
+still needs a source before you submit. Ask *"optimize this post"* any time.
+
 Every save syncs to the CMS. Changes made in the CMS come back into your file. If both
 change at once, nothing is overwritten: you get both versions to merge. Publishing and
 review still go through the CMS workflow.
