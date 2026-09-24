@@ -46,8 +46,13 @@ workspace lands in the wrong place, so:
   → **Re-authenticate**. On the sign-in page keep **All my organizations**,
   and use **Add another account** for each other CMS account they write under.
 - **Missing account:** if the writer means an account `list_workspaces`
-  doesn't show, they add it the same way: reconnect and choose "Add another
-  account". Don't suggest adding connections by hand.
+  doesn't show, they sign in to the connection again **as that account**
+  (Settings → Plugins → Interactor CMS → Connectors → interactor-cms →
+  Connect or Re-authenticate; in a terminal, `/mcp` → Re-authenticate). A new
+  sign-in ADDS the account: every account already on the connection stays
+  (the approval page lists them as "already connected, stays on"). Tell them
+  not to Disconnect first, which removes the others. Don't suggest adding
+  connections by hand.
 - **Say it.** Whenever you open or create a post, name the account,
   organization and site it's in.
 

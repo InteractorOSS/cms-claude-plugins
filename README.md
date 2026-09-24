@@ -66,6 +66,10 @@ One sign-in covers all of them. On the CMS sign-in page:
 - click **Add another account** for each other CMS account you write under (a work and a
   personal one, say). You sign in as that account, come back to the same page, and repeat.
 
+Or sign in to each account separately, from whichever folder uses it: each new sign-in
+**adds** that account to the connection, and the approval page lists the accounts that stay
+on. (Don't Disconnect in between: that removes them.)
+
 That's all: no extra connections to add. Every account's organizations and sites are
 reachable from the one connection, and each folder picks where it works (below).
 
