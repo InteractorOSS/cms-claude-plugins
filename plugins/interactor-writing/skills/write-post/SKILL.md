@@ -120,7 +120,9 @@ and yours stay in step) or use `edit_post_content` for a small change.
    (or finding it already exists) is never the end of the request, and never
    a reason to ask "want me to open it?".
 
-3. **Open it:** `open_for_editing` with the post's `id`, **once**. Each call
+3. **Open it:** `open_for_editing` with the post's `id` (and `site` set to
+   the folder's bound site, if any: the editor's "All posts" link then lists
+   that site), **once**. Each call
    ends the previous editing session for that post, so a second call cuts off
    a sync tool that's already running. Keep what it returns and reuse it
    instead of calling again: `editor_url`, `preview_url`, `edit_key`,
@@ -184,9 +186,27 @@ and yours stay in step) or use `edit_post_content` for a small change.
   already keeps a checkpoint of each writing session and after each pause. If
   the writer wants an earlier version back, use `list_post_revisions` and
   `restore_post_revision`. The restored text arrives in the file on its own.
-- The frontmatter is fair game (title, excerpt, tags, `meta_description`, …)
-  except `id`. **Don't change `status` in the file**: the CMS refuses it.
-  Submitting, approving and publishing go through `post_workflow`.
+- The frontmatter is fair game (title, excerpt, slug, category, tags,
+  `platforms`, `featured_image`, `featured_image_alt`, `meta_description`,
+  `meta_keywords`) except `id`. **Don't change `status` in the file**: the CMS
+  refuses it. Submitting, approving and publishing go through `post_workflow`.
+  The writer sees and edits the same fields in the page's **Details** panel
+  (button at the top right), so when they ask where to set the image, URL,
+  category, tags, sites or search description, point them there.
+- **Images.** The writer adds a picture by pasting or dropping it into the
+  text, or with the image button in the toolbar; the featured image (top of
+  the post, its thumbnail in lists, its share image) is in **Details**:
+  Upload, or "Generate title card" for a free one. To add an image yourself,
+  `upload_media` it, then put `![what it shows](<url>)` on its own line in the
+  file, or set `featured_image` (and `featured_image_alt`) in the frontmatter.
+  `generate_featured_image` makes the title card.
+- **Social posts.** When the writer asks for LinkedIn, X or Facebook copy,
+  write it with `save_social_draft` (one call per network) rather than only in
+  chat: it appears in the page's **Social** tab within seconds, where they can
+  edit it. `list_social_drafts` shows what's there. Keep to the limits
+  (LinkedIn 2800, Facebook 1500, X 280 per tweet; separate the tweets of a
+  thread with a line containing only `---`). Scheduling happens in the CMS's
+  Social queue; say so if they ask to post it.
 - **Write it to be found.** When you draft a new post or rewrite a large part
   of one, follow the `optimize-post` skill (answer first, question headings,
   real evidence, title and meta description). Before any `post_workflow`
