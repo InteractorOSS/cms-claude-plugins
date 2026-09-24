@@ -14,7 +14,7 @@ you make for them appearing on that same page. Do the setup quietly and quickly.
 ## Where to work: workspaces (read this first)
 
 The CMS tools come from this plugin's one connection, `interactor-cms` (tools
-named `mcp__plugin_interactor-writing_interactor-cms__*`). Signed in with
+named `mcp__plugin_interactor-cms_interactor-cms__*`). Signed in with
 **All my organizations**, that one connection reaches every organization and
 site of every account the writer added on the sign-in page ("Add another
 account"). Each call says where it acts with its `workspace` argument:
@@ -41,8 +41,8 @@ workspace lands in the wrong place, so:
   `all_organizations: false`, the writer signed in before this existed and
   the connection covers one organization only. Say so, and ask them to
   reconnect once: in the Claude desktop app, **Settings → Plugins →
-  Interactor Writing → Connectors → interactor-cms → Disconnect, then
-  Connect**; in a terminal, `/mcp` → `plugin:interactor-writing:interactor-cms`
+  Interactor CMS → Connectors → interactor-cms → Disconnect, then
+  Connect**; in a terminal, `/mcp` → `plugin:interactor-cms:interactor-cms`
   → **Re-authenticate**. On the sign-in page keep **All my organizations**,
   and use **Add another account** for each other CMS account they write under.
 - **Missing account:** if the writer means an account `list_workspaces`
@@ -74,10 +74,12 @@ so):
 
    It holds no secrets; the writer can commit it or not.
 3. Record the folder in the writer's folder list,
-   `~/.interactor-writing/folders.json` (create it if missing): a JSON object
+   `~/.interactor-cms/folders.json` (create it if missing): a JSON object
    mapping each workspace to its folder's absolute path, e.g.
    `{"psdjung@gmail.com/peter-jung/peterjung-site": "/Users/…/peterjung-site"}`.
-   Replace an older entry for the same workspace; keep the others.
+   Replace an older entry for the same workspace; keep the others. If only
+   the old `~/.interactor-writing/folders.json` exists (from before the
+   plugin was renamed), move its entries into the new file.
 4. Confirm in one line: "This folder now works in psdjung@gmail.com ›
    Peter Jung › peterjung.site."
 
@@ -128,8 +130,8 @@ and yours stay in step) or use `edit_post_content` for a small change.
 
 1. **Signed in, and where?** If the connection isn't signed in, tell the
    writer to sign in once. In the Claude desktop app: **Settings → Plugins →
-   Interactor Writing → Connectors → interactor-cms → Connect**; in Claude Code
-   in a terminal: `/mcp` → `plugin:interactor-writing:interactor-cms` →
+   Interactor CMS → Connectors → interactor-cms → Connect**; in Claude Code
+   in a terminal: `/mcp` → `plugin:interactor-cms:interactor-cms` →
    authenticate. On the sign-in page: keep **All my organizations**, and use
    **Add another account** for each other CMS account they write under. Know
    the workspace (see "Where to work") before going on, and pass it as

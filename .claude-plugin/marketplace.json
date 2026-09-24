@@ -8,10 +8,10 @@
   },
   "plugins": [
     {
-      "name": "interactor-writing",
-      "source": "./plugins/interactor-writing",
+      "name": "interactor-cms",
+      "source": "./plugins/interactor-cms",
       "description": "Write and edit Interactor CMS posts from Claude: open a post and type right on it, formatted, beside the chat, or ask Claude for changes.",
-      "version": "0.11.0"
+      "version": "1.0.0"
     }
   ]
 }

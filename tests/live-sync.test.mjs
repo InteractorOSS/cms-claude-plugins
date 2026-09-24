@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decide, parseArgs, sessionUrlFor } from "../plugins/interactor-writing/scripts/live-sync.mjs";
+import { decide, parseArgs, sessionUrlFor } from "../plugins/interactor-cms/scripts/live-sync.mjs";
 
 const base = "---\ntitle: A\n---\nOriginal\n";
 const edited = "---\ntitle: A\n---\nEdited\n";

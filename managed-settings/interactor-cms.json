@@ -9,6 +9,6 @@
     }
   },
   "enabledPlugins": {
-    "interactor-writing@interactor": true
+    "interactor-cms@interactor": true
   }
 }

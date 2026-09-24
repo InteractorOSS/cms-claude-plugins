@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Interactor Writing — live sync between one local Markdown file and one CMS
+// Interactor CMS — live sync between one local Markdown file and one CMS
 // post. Started by the /write-post skill after `open_for_editing`; the writer
 // never runs it by hand.
 //

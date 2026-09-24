@@ -1,6 +1,6 @@
 # Interactor CMS plugins for Claude
 
-**Interactor Writing** lets you write and edit [Interactor CMS](https://cms.interactor.com)
+The **Interactor CMS** plugin lets you write and edit [Interactor CMS](https://cms.interactor.com)
 posts from Claude. Say *"open the post about …"* and you get:
 
 - the post beside the chat, formatted, and you type right on it like a document: it saves to
@@ -29,28 +29,28 @@ terminal commands):
 
 ```
 /plugin marketplace add InteractorOSS/cms-claude-plugins
-/plugin install interactor-writing@interactor
+/plugin install interactor-cms@interactor
 ```
 
 Or run the same thing from a terminal:
 
 ```
 claude plugin marketplace add InteractorOSS/cms-claude-plugins
-claude plugin install interactor-writing@interactor
+claude plugin install interactor-cms@interactor
 ```
 
 Then sign in to the CMS once:
 
-- **Claude desktop app:** Settings → Plugins → Interactor Writing → Connectors →
+- **Claude desktop app:** Settings → Plugins → Interactor CMS → Connectors →
   **interactor-cms** → Connect.
-- **Claude Code in a terminal:** run `/mcp`, pick `plugin:interactor-writing:interactor-cms`,
+- **Claude Code in a terminal:** run `/mcp`, pick `plugin:interactor-cms:interactor-cms`,
   and authenticate.
 
 Approve in the browser and choose the organization Claude may write in. That's all. The
 CMS connection comes with the plugin.
 
 Then say *"open the post about …"*, *"start a new post about …"*, or run
-`/interactor-writing:write-post`.
+`/interactor-cms:write-post`.
 
 Editing in a local file needs [Node.js](https://nodejs.org) 18 or later. Without it, the
 plugin still opens the live preview and makes changes for you through the CMS.
@@ -70,8 +70,8 @@ That's all: no extra connections to add. Every account's organizations and sites
 reachable from the one connection, and each folder picks where it works (below).
 
 Signed in before this existed? Reconnect once. In the desktop app: **Settings → Plugins →
-Interactor Writing → Connectors → interactor-cms → Disconnect**, then **Connect**. In a
-terminal: `/mcp` → `plugin:interactor-writing:interactor-cms` → **Re-authenticate**.
+Interactor CMS → Connectors → interactor-cms → Disconnect**, then **Connect**. In a
+terminal: `/mcp` → `plugin:interactor-cms:interactor-cms` → **Re-authenticate**.
 
 ## One folder, one place
 
@@ -82,14 +82,14 @@ it in `.interactor-cms.json` (no secrets in it). You can also say it outright:
 > use this folder for psdjung@gmail.com, Peter Jung, peterjung.site
 
 From then on, sessions there work only in that place: lists show that site's posts and new posts
-go on it. Claude also keeps a list of your folders (`~/.interactor-writing/folders.json`), so if
+go on it. Claude also keeps a list of your folders (`~/.interactor-cms/folders.json`), so if
 you ask for peterjung.site from another folder, it tells you where that lives and offers to
 switch there.
 
 ## Set it up for your whole team (admins)
 
 To skip the install commands for everyone, pre-configure the plugin with
-[`managed-settings/interactor-writing.json`](managed-settings/interactor-writing.json):
+[`managed-settings/interactor-cms.json`](managed-settings/interactor-cms.json):
 
 - **Claude Team or Enterprise:** an Owner pastes it into the organization's Claude Code
   managed settings in the claude.ai admin settings. It reaches everyone at their next start.
@@ -109,7 +109,7 @@ organizations** and adding any other accounts they write under.
 
 `open_for_editing` gives the plugin a one-post edit key: it can only read and save that
 one post, expires after 8 hours, and stops working when the Claude connection is revoked
-under **API Tokens** in the CMS. The sync tool (`plugins/interactor-writing/scripts/live-sync.mjs`)
+under **API Tokens** in the CMS. The sync tool (`plugins/interactor-cms/scripts/live-sync.mjs`)
 has no dependencies and talks only to the CMS.
 
 ## Development
