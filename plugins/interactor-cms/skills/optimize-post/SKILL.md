@@ -23,6 +23,12 @@ don't add tactics from general "SEO tips" that aren't here.
   you can, and tell the writer what's left (see "Report").
 - **When asked** ("optimize this", "make it rank", "SEO/AEO/GEO this post").
 
+Findable is not enough: it has to read like a person wrote it. After you
+apply the template, make a last pass with the `humanizer` skill (embedded
+mode) over what you wrote, and don't let it undo the template: a question
+heading or an answer-first opening is not a tell. Its rule of adding no facts
+is the same as the honesty rules below.
+
 Work on the post the way `write-post` does: edit `posts/<filename>` when the
 live sync is running, otherwise `edit_post_content` for small changes. Call
 `checkpoint_post` before a restructure.
@@ -107,8 +113,17 @@ a number, a decision). For example:
 > - ✓ Answer-first opening (52 words), definition in paragraph 2
 > - ✓ 4 of 5 headings are questions
 > - ✓ Meta description 148 chars; title 54 chars
+> - ✓ Humanizer pass: cut 3 "not X but Y" contrasts and a closing one-liner
 > - ⚠ 2 claims need a source: the "3× faster" figure, the Gartner stat
 > - ⚠ No quotation yet: a line from the customer would strengthen it
 
 If a `check_post_seo` tool is available on the CMS connection, run it and fix
 every error it reports before submitting; its warnings go in the report.
+
+`check_post_seo` is also where the CMS checks the humanizer pass for itself.
+Warnings whose key starts with `humanizer_` name passages that still read as
+AI-written (`humanizer_review` ones quote the passage and suggest a fix).
+Rewrite those passages and run it again, unless the wording is the writer's
+own: then leave it and say so. `post_workflow` submit and publish return the
+same list as `humanizer.warnings`; they never block, so tell the writer what
+is left rather than staying silent.

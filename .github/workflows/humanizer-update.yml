@@ -1,0 +1,75 @@
+name: Humanizer update
+
+# Checks https://github.com/blader/humanizer every day and, when its SKILL.md
+# changed, opens (or refreshes) one PR that copies it into the plugin's
+# `humanizer` skill and bumps the plugin's patch version. A PR rather than a
+# direct push: it is third-party text every writer's Claude follows, so a
+# person reads the diff first.
+#
+# PRs opened with the default GITHUB_TOKEN don't trigger test.yml, so this job
+# runs the tests itself. Add a HUMANIZER_PR_TOKEN secret (a PAT with contents +
+# pull-requests write) to have them run on the PR too. The repo setting "Allow
+# GitHub Actions to create and approve pull requests" must be on.
+on:
+  schedule:
+    - cron: "23 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: humanizer-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: chore/humanizer-sync
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: sync
+        run: node scripts/sync-humanizer.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - if: steps.sync.outputs.changed == 'true'
+        run: node --test tests/live-sync.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
+
+      - if: steps.sync.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.HUMANIZER_PR_TOKEN || github.token }}
+          VERSION: ${{ steps.sync.outputs.version }}
+          PREVIOUS: ${{ steps.sync.outputs.previous_version }}
+          COMMIT: ${{ steps.sync.outputs.commit }}
+          CHANGES: ${{ steps.sync.outputs.changes }}
+          PLUGIN_VERSION: ${{ steps.sync.outputs.plugin_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$BRANCH"
+          git add plugins .claude-plugin
+          git commit -m "Update Humanizer to v$VERSION; version $PLUGIN_VERSION"
+          git push --force origin "$BRANCH"
+          {
+            echo "Upstream [blader/humanizer](https://github.com/blader/humanizer/commit/$COMMIT) changed its SKILL.md: v$PREVIOUS -> v$VERSION. Plugin version -> $PLUGIN_VERSION."
+            echo
+            echo "Every writer's Claude follows this skill. Read the diff of \`skills/humanizer/SKILL.md\` before merging. The CMS server gets the same update through its own PR (InteractorOSS/content-manager)."
+            echo
+            echo "## Upstream changelog"
+            echo
+            echo "${CHANGES:-_No changelog entry._}"
+          } > pr-body.md
+          title="Update Humanizer to v$VERSION"
+          if gh pr view "$BRANCH" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$BRANCH" --title "$title" --body-file pr-body.md
+          else
+            gh pr create --head "$BRANCH" --base main --title "$title" --body-file pr-body.md
+          fi
