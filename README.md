@@ -116,10 +116,25 @@ one post, expires after 8 hours, and stops working when the Claude connection is
 under **API Tokens** in the CMS. The sync tool (`plugins/interactor-cms/scripts/live-sync.mjs`)
 has no dependencies and talks only to the CMS.
 
+## Writing like a person (Humanizer)
+
+The plugin includes [Humanizer](https://github.com/blader/humanizer) (MIT, by Siqi Chen) as
+its `humanizer` skill, copied verbatim with its license into
+`plugins/interactor-cms/skills/humanizer/`. Claude makes a last pass with it over any post,
+excerpt, search description, social copy or FAQ answer it writes, so the result doesn't read
+like a chatbot. The CMS server holds the same rules for its own AI drafting and for every
+other client of its connector.
+
+`node scripts/sync-humanizer.mjs --check` says whether upstream changed (exit 10 when it
+has); without `--check` it copies the new version in and bumps the plugin's patch version so
+installed copies update. `.github/workflows/humanizer-update.yml` runs it daily and opens a
+pull request; read the diff before merging, since it is third-party text every writer's
+Claude follows.
+
 ## Development
 
 ```
-node --test tests/live-sync.test.mjs
+node --test tests/live-sync.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
 claude plugin validate .
 ```
 

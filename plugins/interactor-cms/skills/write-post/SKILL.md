@@ -250,6 +250,12 @@ and yours stay in step) or use `edit_post_content` for a small change.
   (LinkedIn 2800, Facebook 1500, X 280 per tweet; separate the tweets of a
   thread with a line containing only `---`). Scheduling happens in the CMS's
   Social queue; say so if they ask to post it.
+- **Write like a person.** Any prose you write or rewrite for the writer (body,
+  title, excerpt, search description, social copy, FAQ answers) gets a final
+  pass with the `humanizer` skill in embedded mode, before you save it: remove
+  the AI-writing patterns it lists, keep every fact, add none. The writer's
+  own words, and any style sample they give, decide the voice; don't
+  "humanize" text the writer typed unless they ask.
 - **Write it to be found.** When you draft a new post or rewrite a large part
   of one, follow the `optimize-post` skill (answer first, question headings,
   real evidence, title and meta description). Before any `post_workflow`
