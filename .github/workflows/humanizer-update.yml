@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - if: steps.sync.outputs.changed == 'true'
-        run: node --test tests/live-sync.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
+        run: node --test tests/live-sync.test.mjs tests/posts-dir.test.mjs tests/mirror.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
 
       - if: steps.sync.outputs.changed == 'true'
         env:
