@@ -40,3 +40,13 @@ test("derives the session endpoint", () => {
     "https://cms.interactor.com/api/edit/session"
   );
 });
+
+test("with --workspace, the file goes in the workspace's posts folder (the mirror's)", async () => {
+  const { outPathFor } = await import("../plugins/interactor-cms/scripts/live-sync.mjs");
+  const ws = "a@b.com/org/site";
+  const folders = { [ws]: { folder: "/x/site", posts_dir: "/w/writing" } };
+  assert.equal(outPathFor({ workspace: ws, filename: "hello.md" }, { folders }), "/w/writing/hello.md");
+  assert.equal(outPathFor({ workspace: ws, filename: "hello.md", folder: "/y" }, { folders: {} }), "/y/posts/hello.md");
+  assert.throws(() => outPathFor({ workspace: ws, filename: "../x.md" }, { folders }), /plain file name/);
+  assert.equal(outPathFor({ out: "/tmp/p/a.md" }), "/tmp/p/a.md");
+});

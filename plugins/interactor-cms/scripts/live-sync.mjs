@@ -3,7 +3,13 @@
 // post. Started by the /write-post skill after `open_for_editing`; the writer
 // never runs it by hand.
 //
-//   CMS_EDIT_KEY=cms_edit_... node live-sync.mjs --file-url <url> --out <path>
+//   CMS_EDIT_KEY=cms_edit_... node live-sync.mjs --file-url <url> --workspace <workspace> --filename <filename> [--folder <bound folder>]
+//   CMS_EDIT_KEY=cms_edit_... node live-sync.mjs --file-url <url> --out <path>      (older form)
+//
+// With --workspace, the file goes in that workspace's posts folder
+// (posts-dir.mjs), the same place the mirror keeps it. While it runs it holds
+// a lock (.interactor-cms/live/<post id>.pid in that folder), so the mirror
+// leaves this one post to it and picks it up again when it stops.
 //
 // Every second it reads the file; every other second it asks the CMS whether
 // the post changed (a 304 when it hasn't). A saved edit to the file — by the
@@ -20,33 +26,33 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { decide, frontmatterId, liveLockName } from "./sync-core.mjs";
+import { postsDirFor } from "./posts-dir.mjs";
+
+export { decide };
 
 export const TICK_MS = 1000;
 export const REMOTE_EVERY_TICKS = 2;
-
-/**
- * One tick of the two-way loop. `base` is the CMS's file as of the last
- * successful sync; `local` is the file now; `remote` the CMS now (undefined
- * when this tick didn't ask, or the CMS said "unchanged").
- * @returns {"idle" | "push" | "pull" | "adopt" | "conflict"}
- */
-export function decide({ local, base, remote }) {
-  const theirs = remote ?? base;
-  const localChanged = local !== base;
-  const remoteChanged = theirs !== base;
-  if (!localChanged && !remoteChanged) return "idle";
-  if (localChanged && !remoteChanged) return "push";
-  if (!localChanged && remoteChanged) return "pull";
-  return local === theirs ? "adopt" : "conflict";
-}
 
 export function parseArgs(argv) {
   const out = {};
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--file-url") out.fileUrl = argv[++i];
     else if (argv[i] === "--out") out.out = argv[++i];
+    else if (argv[i] === "--workspace") out.workspace = argv[++i];
+    else if (argv[i] === "--filename") out.filename = argv[++i];
+    else if (argv[i] === "--folder") out.folder = argv[++i];
   }
   return out;
+}
+
+/** The file path: the workspace's posts folder + filename, or --out as given. */
+export function outPathFor(args, opts = {}) {
+  if (args.workspace) {
+    if (!args.filename || path.basename(args.filename) !== args.filename) throw new Error("--filename must be a plain file name");
+    return path.join(postsDirFor(args.workspace, { fallbackFolder: args.folder, ...opts }), args.filename);
+  }
+  return args.out ? path.resolve(args.out) : null;
 }
 
 /** The session endpoint that sits beside the file endpoint. */
@@ -57,14 +63,27 @@ export function sessionUrlFor(fileUrl) {
 const log = (msg) => process.stdout.write(`[interactor] ${msg}\n`);
 
 async function main() {
-  const { fileUrl, out } = parseArgs(process.argv.slice(2));
+  const args = parseArgs(process.argv.slice(2));
+  const { fileUrl } = args;
   const key = process.env.CMS_EDIT_KEY;
-  if (!fileUrl || !out || !key) {
-    process.stderr.write("Usage: CMS_EDIT_KEY=... node live-sync.mjs --file-url <url> --out <path>\n");
+  let filePath = null;
+  try {
+    filePath = outPathFor(args);
+  } catch (err) {
+    log(`not started — ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(65);
+  }
+  if (!fileUrl || !filePath || !key) {
+    process.stderr.write(
+      "Usage: CMS_EDIT_KEY=... node live-sync.mjs --file-url <url> --workspace <workspace> --filename <name> [--folder <dir>]\n"
+    );
     process.exit(64);
   }
   const auth = { Authorization: `Bearer ${key}` };
-  const filePath = path.resolve(out);
+  let lockFile = null;
+  const unlock = () => {
+    if (lockFile) fs.rmSync(lockFile, { force: true });
+  };
 
   const ended = async (res) => {
     let reason = "";
@@ -88,6 +107,14 @@ async function main() {
   let etag = first.headers.get("etag");
 
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  // Tell the mirror this post is ours while we run.
+  const postId = frontmatterId(base);
+  if (postId) {
+    lockFile = path.join(path.dirname(filePath), liveLockName(postId));
+    fs.mkdirSync(path.dirname(lockFile), { recursive: true });
+    fs.writeFileSync(lockFile, String(process.pid));
+    process.on("exit", unlock);
+  }
   if (fs.existsSync(filePath) && fs.readFileSync(filePath, "utf-8") !== base) {
     // An earlier session's file that never reached the CMS — keep the words.
     const kept = `${filePath}.local-${Date.now()}`;

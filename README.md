@@ -9,7 +9,8 @@ posts from Claude. Say *"open the post about …"* and you get:
   seconds,
 - your post list in the panel too: click a post to open it in the editor, with a way back to the
   list,
-- and a copy of the post as a Markdown file in your folder, kept in sync.
+- and every post of the folder's site as a Markdown file on disk, kept in two-way sync for the
+  whole session, so a change made anywhere shows up as an ordinary file diff.
 
 Claude also writes every post to be found: by search engines (SEO), by answer boxes and AI
 Overviews (AEO), and by AI assistants that cite sources (GEO). It leads with the answer,
@@ -90,6 +91,21 @@ go on it. Claude also keeps a list of your folders (`~/.interactor-cms/folders.j
 you ask for peterjung.site from another folder, it tells you where that lives and offers to
 switch there.
 
+## Where your posts are saved
+
+In a bound folder, every post of its site is mirrored into a posts folder: `posts/` inside the
+folder by default (`~/.interactor-cms/posts/<account>/<organization>/<site>/` for a site with
+no folder). To keep them somewhere else, just say so:
+
+> save peterjung.site posts in ~/Writing/peterjung-site
+
+Claude records it in `~/.interactor-cms/folders.json` and moves the files there. Two sites can
+never share a posts folder, since files are named after their slugs. Changes in the CMS land in
+the files; saved edits go back to the CMS. If both change at once you get both versions to merge
+(`<file>.cms`). Deleting a file never deletes a post, and a post moved to the CMS trash only
+removes its file if the file had no unsynced edits; otherwise the edits are kept beside it.
+The mirror needs Node.js 18+; without it, everything else works.
+
 ## Set it up for your whole team (admins)
 
 To skip the install commands for everyone, pre-configure the plugin with
@@ -116,6 +132,22 @@ one post, expires after 8 hours, and stops working when the Claude connection is
 under **API Tokens** in the CMS. The sync tool (`plugins/interactor-cms/scripts/live-sync.mjs`)
 has no dependencies and talks only to the CMS.
 
+`open_mirror` gives the folder mirror (`scripts/mirror.mjs`) a key for one workspace: it lists
+that site's posts and reads and saves their files, within the signed-in account's own
+permissions and the connection's site limits. It can't create or delete a post or change its
+status, expires after 8 hours, and ends with the connection. The mirror asks the CMS for one
+list every few seconds (an empty "unchanged" answer when nothing moved) and downloads a post
+only when it changed. Where each workspace's posts go is decided in one place,
+`scripts/posts-dir.mjs`, which both tools use.
+
+## Changes
+
+- **1.3.0:** every post of a bound folder's site mirrored to disk in two-way sync
+  (`open_mirror`, `scripts/mirror.mjs`); a posts folder per workspace (`posts_dir` in
+  `folders.json`, set by asking Claude); live-sync saves into that same folder. Needs the CMS's
+  `open_mirror` tool.
+- **1.2.0:** Humanizer skill. **1.1.0:** reply check. **1.0.0:** renamed to Interactor CMS.
+
 ## Writing like a person (Humanizer)
 
 The plugin includes [Humanizer](https://github.com/blader/humanizer) (MIT, by Siqi Chen) as
@@ -134,7 +166,7 @@ Claude follows.
 ## Development
 
 ```
-node --test tests/live-sync.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
+node --test tests/live-sync.test.mjs tests/posts-dir.test.mjs tests/mirror.test.mjs tests/check-reply.test.mjs tests/humanizer.test.mjs
 claude plugin validate .
 ```
 

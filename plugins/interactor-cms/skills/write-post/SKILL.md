@@ -82,11 +82,14 @@ so):
    `~/.interactor-cms/folders.json` (create it if missing): a JSON object
    mapping each workspace to its folder's absolute path, e.g.
    `{"psdjung@gmail.com/peter-jung/peterjung-site": "/Users/…/peterjung-site"}`.
-   Replace an older entry for the same workspace; keep the others. If only
-   the old `~/.interactor-writing/folders.json` exists (from before the
-   plugin was renamed), move its entries into the new file.
+   An entry may instead be `{"folder": "…", "posts_dir": "…"}` (see "Where
+   posts are saved"): when rebinding such a workspace, change only `folder`
+   and keep its `posts_dir`. Replace an older entry for the same workspace;
+   keep the others exactly as they are. If only the old
+   `~/.interactor-writing/folders.json` exists (from before the plugin was
+   renamed), move its entries into the new file.
 4. Confirm in one line: "This folder now works in psdjung@gmail.com ›
-   Peter Jung › peterjung.site."
+   Peter Jung › peterjung.site." Then start the mirror (below).
 
 A binding file from an older version has `connection` and `organization_id`
 but no `workspace`: `list_workspaces`, find the entry with that account,
@@ -109,6 +112,106 @@ folder already has, say where it lives and offer to move there:
   request, and don't bind this folder to it.
 - The folder no longer exists: drop it from `folders.json` and treat the
   workspace as unbound.
+
+## The mirror: every post in the folder
+
+In a bound folder, every post of its workspace is kept on disk as Markdown,
+in the workspace's posts folder, in two-way sync for the whole session. A
+change in the CMS (the editor, another writer, an MCP tool) lands in its
+file; a saved edit to a file goes back to the CMS. So a change shows up as an
+ordinary file diff, without opening the review page.
+
+**Start it once, at the start of every session in a bound folder** (the
+session context says when), and right after binding a folder:
+
+1. `open_mirror` with the folder's `workspace`. Keep `mirror_key` and
+   `mirror_url`. `mirror_key` is a secret, like `edit_key`: it goes only into
+   the script's environment, never into chat, a file or a log.
+2. Start it with Bash, `run_in_background: true`, from the folder:
+
+   ```
+   CMS_MIRROR_KEY='<mirror_key>' node "${CLAUDE_PLUGIN_ROOT}/scripts/mirror.mjs" --url '<mirror_url>' --workspace '<workspace>' --folder "$PWD"
+   ```
+
+3. Read its output until the `live` line (a few seconds; longer for
+   hundreds of posts). Then go on with what the writer asked; don't report
+   the mirror unless they ask, or something below needs saying.
+
+Without Node.js 18+ the mirror is off and everything else works as before.
+Never edit `.interactor-cms/mirror.json` in the posts folder: it is the
+mirror's record of the last sync.
+
+Its output lines (all start `[interactor] mirror:`), and what to tell the
+writer:
+
+- `folder: …` and `live — N posts of <workspace> …`: started. Nothing to say.
+- `the folder is inside the git repository …`: see "Inside a git
+  repository?" below; ask once.
+- `added …` / `pulled … (changed in the CMS)` / `restored …`: a post arrived
+  or changed in the CMS. Mention it if it touches what you're working on
+  (and show the diff if they ask what changed).
+- `saved … to CMS`: a file edit went up. Nothing to say.
+- `CONFLICT <file>`: the post changed in the CMS while the file had unsynced
+  edits. The file keeps the local version; the CMS one is in `<file>.cms`.
+  Offer to merge (saving the merged file syncs it), then delete the `.cms`.
+- `save FAILED <file> — <reason>`: explain the reason plainly and fix the
+  file (e.g. a changed `status`, which the CMS refuses from a file).
+- `kept an older local copy of … as ….local-<time>`: a file that differed
+  from the CMS, with no record of its last sync, was set aside before the
+  CMS version was written. Offer to bring anything back.
+- `removed <file> — the post was moved to the CMS trash`: a clean file of a
+  trashed post was removed; restoring the post (`restore_deleted_post`)
+  brings it back. `… no longer in this workspace`: deleted for good, or moved
+  to another site.
+- `<file> had unsynced edits, but the post was …`: the post was trashed or
+  left the workspace while its file had edits. Nothing was uploaded; the
+  edits are kept as `<file>.local-<time>`. Tell the writer and offer to
+  restore the post and bring the edits back.
+- `<file> was deleted here — the post stays in the CMS`: deleting a file
+  never deletes a post. To delete a post, use `delete_post` (the trash).
+- `renamed <old> → <new>`: the slug changed in the CMS.
+- `left <file> alone — it isn't one of this workspace's posts`: a `.md` file
+  the mirror doesn't know. New posts are created with `create_post`, never by
+  adding a file.
+- `already running for …`: another session in this folder runs it. Fine.
+- `not started — …` (e.g. a shared posts folder) or `stopped — the key is
+  for …`: tell the writer the reason; don't retry blindly.
+- `ended — …`: the key expired (8 hours) or the connection was revoked. Run
+  `open_mirror` again once and restart it; the files stay.
+
+`status` in a file is read-only, as with the open post: submitting,
+approving and publishing go through `post_workflow`.
+
+## Where posts are saved
+
+Each workspace has one posts folder, used by both the mirror and the open
+post. The session context lists them. By default:
+
+- a bound workspace: `<bound folder>/posts`
+- a workspace with no bound folder:
+  `~/.interactor-cms/posts/<account>/<organization>/<site>/`
+
+**To change it**, the writer just asks ("save peterjung.site posts in
+~/Writing/peterjung-site"). They never edit JSON; you do it with:
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/scripts/posts-dir.mjs" set '<workspace>' '<folder>'
+```
+
+(`default` instead of a folder goes back to the default). It records
+`posts_dir` in that workspace's `folders.json` entry (absolute, or relative
+to the bound folder), leaves every other entry as it was, and **moves** the
+existing files and the mirror's record to the new folder, so nothing is
+downloaded again. Stop the mirror (and any live-sync) first, and start it
+again afterwards. Confirm in one line with the new path.
+
+- **No shared folders.** Two workspaces can never use the same posts folder,
+  or one inside the other: posts are named after their slugs, so they would
+  overwrite each other. The script refuses, saying which workspace already
+  uses it; pass that on and ask for another folder.
+- **Inside a git repository?** If the posts folder is inside a git repo, say
+  so the first time, and ask whether they want the posts committed or
+  ignored. Don't commit them or edit `.gitignore` yourself.
 
 ## Listing posts
 
@@ -176,10 +279,14 @@ and yours stay in step) or use `edit_post_content` for a small change.
    working folder:
 
    ```
-   CMS_EDIT_KEY='<edit_key>' node "${CLAUDE_PLUGIN_ROOT}/scripts/live-sync.mjs" --file-url '<file_url>' --out 'posts/<filename>'
+   CMS_EDIT_KEY='<edit_key>' node "${CLAUDE_PLUGIN_ROOT}/scripts/live-sync.mjs" --file-url '<file_url>' --workspace '<workspace>' --filename '<filename>' --folder "$PWD"
    ```
 
-   Read its output until the `live` line appears (a second or two). If `node`
+   It saves the post in the workspace's posts folder (see "Where posts are
+   saved"; the session context lists each workspace's), the same file the
+   mirror keeps, and prints the full path on its `file:` line. Call that
+   path `<post file>` below. While it runs, the mirror leaves this one post
+   to it. Read its output until the `live` line appears (a second or two). If `node`
    isn't installed (`node --version` fails or is older than 18), say the file
    editing needs Node.js from nodejs.org (a one-time install), and meanwhile
    offer the preview-only mode below.
@@ -195,7 +302,7 @@ and yours stay in step) or use `edit_post_content` for a small change.
    read-only page for sending to reviewers.
 
    **Don't point the writer at the local file.** Don't link
-   `posts/<filename>` in your message or open it in the file viewer: the
+   `<post file>` in your message or open it in the file viewer: the
    app's file viewer shows Markdown as a formatted but **read-only** page that
    looks almost like the editor, and writers click it and conclude the page
    can't be edited. The file is for your own edits, not theirs.
@@ -215,7 +322,7 @@ and yours stay in step) or use `edit_post_content` for a small change.
 
 ## While it's open
 
-- **Make every change by editing `posts/<filename>`** (Edit/Write), and
+- **Make every change by editing `<post file>`** (Edit/Write), and
   re-read it first: the writer may have typed on the page, and the sync pulls
   their saves into the file. Your saves appear on their page within a couple
   of seconds, applied while they pause so their cursor doesn't jump. If you
@@ -266,14 +373,23 @@ and yours stay in step) or use `edit_post_content` for a small change.
   - `pulled a change made in the CMS`: mention it if it affects what they're
     working on.
   - `CONFLICT`: someone changed the post in the CMS while the file had unsynced
-    edits. Their version is in `posts/<filename>.cms`. Offer to merge it into the
+    edits. Their version is in `<post file>.cms`. Offer to merge it into the
     file (saving the merge syncs it), then delete the `.cms` copy.
   - `save FAILED`: explain the reason it gives in plain words and fix the file.
   - `kept an older local copy`: an earlier session's unsynced file was set
-    aside as `posts/<filename>.local-<time>`. Offer to bring anything back.
+    aside as `<post file>.local-<time>`. Offer to bring anything back.
   - `editing session ended`: the session expired (8 hours), the post was
     opened again elsewhere, or Claude was disconnected from the CMS. Run
     **Open a post** again, once; the file stays.
+- **Show what you changed.** After you change a post (through the file, or
+  with `update_post` / `edit_post_content` when the sync isn't running), show
+  the writer what changed as a short diff in a fenced ` ```diff ` block:
+  before your first edit, copy the file to your scratchpad, then run
+  `git diff --no-index --no-color -U1 <copy> <post file>` (add `--word-diff`
+  for prose edits within a paragraph) and paste the relevant hunks, trimmed
+  to what matters. A diff in chat is fine; a link to the file isn't (see
+  above). For a change made through the CMS tools with the mirror running,
+  diff the mirror's file before and after its `pulled` line.
 - **The CMS connection renews itself.** Don't warn the writer that it's about
   to expire, or ask them to reconnect because of a time you saw. `whoami`
   reports `token.kind: "connection"` with `refreshes_automatically`. Only a
